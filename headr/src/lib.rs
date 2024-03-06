@@ -20,14 +20,15 @@ pub fn get_args() -> MyResult<Config> {
                 .value_name("FILES")
                 .help("The files to print")
                 .required(true)
-                .multiple(true),
+                .multiple(true)
+                .default_value("-"),
         )
         .arg(
             Arg::with_name("lines")
                 .short("n")
                 .long("lines")
                 .value_name("LINES")
-                .help("The number of lines to print")
+                .help("Number of lines to print")
                 .takes_value(true),
         )
         .arg(
@@ -35,7 +36,7 @@ pub fn get_args() -> MyResult<Config> {
                 .short("c")
                 .long("bytes")
                 .value_name("BYTES")
-                .help("The number of bytes to print")
+                .help("Number of bytes to print")
                 .takes_value(true),
         )
         .get_matches();
