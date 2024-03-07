@@ -37,7 +37,8 @@ pub fn get_args() -> MyResult<Config> {
                 .long("bytes")
                 .value_name("BYTES")
                 .help("Number of bytes to print")
-                .takes_value(true),
+                .takes_value(true)
+                .conflicts_with("lines"),
         )
         .get_matches();
 
@@ -45,11 +46,15 @@ pub fn get_args() -> MyResult<Config> {
         files: matches.values_of_lossy("files").unwrap(),
         lines: matches
             .value_of("lines")
-            .map(|s| parse_positive_int(s).unwrap_or_else(|_| panic!("Invalid input for lines")))
+            .map(|s| {
+                parse_positive_int(s)
+                    .unwrap_or_else(|_| panic!("illegal line count -- {}", s))
+            })
             .unwrap_or(10), // Provide a default value if none is specified
-        bytes: matches
-            .value_of("bytes")
-            .map(|s| parse_positive_int(s).unwrap_or_else(|_| panic!("Invalid input for bytes"))), // Remove the .ok() as it's already an Option
+        bytes: matches.value_of("bytes").map(|s| {
+            parse_positive_int(s)
+                .unwrap_or_else(|_| panic!("illegal byte count -- {}", s))
+        }), // Remove the .ok() as it's already an Option
     })
 }
 
