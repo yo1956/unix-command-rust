@@ -19,7 +19,6 @@ pub fn get_args() -> MyResult<Config> {
             Arg::with_name("files")
                 .value_name("FILES")
                 .help("The files to print")
-                .required(true)
                 .multiple(true)
                 .default_value("-"),
         )
@@ -29,7 +28,7 @@ pub fn get_args() -> MyResult<Config> {
                 .long("lines")
                 .value_name("LINES")
                 .help("Number of lines to print")
-                .takes_value(true),
+                .default_value("10"),
         )
         .arg(
             Arg::with_name("bytes")
@@ -50,7 +49,7 @@ pub fn get_args() -> MyResult<Config> {
                 parse_positive_int(s)
                     .unwrap_or_else(|_| panic!("illegal line count -- {}", s))
             })
-            .unwrap_or(10), // Provide a default value if none is specified
+            .unwrap(),
         bytes: matches.value_of("bytes").map(|s| {
             parse_positive_int(s)
                 .unwrap_or_else(|_| panic!("illegal byte count -- {}", s))
