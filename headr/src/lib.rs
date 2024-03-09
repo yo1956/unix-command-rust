@@ -41,19 +41,22 @@ pub fn get_args() -> MyResult<Config> {
         )
         .get_matches();
 
+    let lines = matches
+        .value_of("lines")
+        .map(parse_positive_int) // OptionがSomeの場合にのみ関数を適用し、Noneの場合は何もしない
+        .transpose() //Option<Result>をResult<Option>に変換する
+        .map_err(|e| format!("illegal line count -- {}", e))?;
+
+    let bytes = matches
+        .value_of("bytes")
+        .map(parse_positive_int)
+        .transpose()
+        .map_err(|e| format!("illegal byte count -- {}", e))?;
+
     Ok(Config {
-        files: matches.values_of_lossy("files").unwrap(),
-        lines: matches
-            .value_of("lines")
-            .map(|s| {
-                parse_positive_int(s)
-                    .unwrap_or_else(|_| panic!("illegal line count -- {}", s))
-            })
-            .unwrap(),
-        bytes: matches.value_of("bytes").map(|s| {
-            parse_positive_int(s)
-                .unwrap_or_else(|_| panic!("illegal byte count -- {}", s))
-        }), // Remove the .ok() as it's already an Option
+        files: matches.values_of_lossy("files").unwrap(), // filesは少なくとも1つの値を持っているはずなので、unwrapしても問題ない
+        lines: lines.unwrap(),
+        bytes,
     })
 }
 
